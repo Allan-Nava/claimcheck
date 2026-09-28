@@ -1,13 +1,13 @@
 {
-  "at": "2026-09-28T13:11:43.682Z",
+  "at": "2026-09-28T15:28:15.103Z",
   "node": "v23.3.0",
-  "total": 74,
+  "total": 112,
   "summary": {
     "tests": {
-      "tp": 19,
+      "tp": 20,
       "fp": 0,
       "fn": 0,
-      "tn": 55,
+      "tn": 92,
       "precision": 1,
       "recall": 1,
       "f1": 1
@@ -16,7 +16,7 @@
       "tp": 9,
       "fp": 0,
       "fn": 0,
-      "tn": 65,
+      "tn": 103,
       "precision": 1,
       "recall": 1,
       "f1": 1
@@ -25,7 +25,34 @@
       "tp": 7,
       "fp": 0,
       "fn": 0,
-      "tn": 67,
+      "tn": 105,
+      "precision": 1,
+      "recall": 1,
+      "f1": 1
+    },
+    "tagged": {
+      "tp": 6,
+      "fp": 0,
+      "fn": 0,
+      "tn": 106,
+      "precision": 1,
+      "recall": 1,
+      "f1": 1
+    },
+    "merged": {
+      "tp": 3,
+      "fp": 0,
+      "fn": 0,
+      "tn": 109,
+      "precision": 1,
+      "recall": 1,
+      "f1": 1
+    },
+    "ran": {
+      "tp": 5,
+      "fp": 0,
+      "fn": 0,
+      "tn": 107,
       "precision": 1,
       "recall": 1,
       "f1": 1
@@ -33,12 +60,12 @@
   },
   "byLang": {
     "en": {
-      "n": 54,
-      "right": 54
+      "n": 85,
+      "right": 85
     },
     "it": {
-      "n": 20,
-      "right": 20
+      "n": 27,
+      "right": 27
     }
   },
   "misses": []

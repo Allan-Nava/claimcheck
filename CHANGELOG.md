@@ -6,6 +6,51 @@ All notable changes to this project are documented here, in the format of
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-09-28
+
+The v0.2.0 milestone: more kinds of claim, and a way to see what the hook has been doing.
+
+### Added
+- **Audit mode and `claimcheck report`.** `CLAIMCHECK_MODE=audit` judges every stop for
+  real, records it, and always falls through; `report` reads that record. Every stop is
+  recorded, not only the ones that fire — without the stops that found nothing there is no
+  denominator, and "how often does it fire" has no answer. A record that cannot be written
+  is never a reason to stall the agent.
+
+  This is the prerequisite the other two items needed: a new lexicon can now run in audit
+  for a week before it is allowed to block anything.
+
+- **`tagged`**, on by default: the message says a version was tagged and the repository
+  has no such tag. `v1.2.3` and `1.2.3` are one release; a repository with no tags at all
+  says nothing either way.
+
+- **`ran`** and **`merged`**, both off by default. `ran` matches only a command named in
+  backticks — *"I ran the linter"* is a sentence, *"I ran `npm run lint`"* is a claim about
+  the session's own record — and is the check most likely to misfire on ordinary English.
+  `merged` needs a pull request number and reaches the network inside a hook's budget.
+
+  The claims that were listed but not built are the ones that name nothing: *"I merged
+  it"*, *"I reverted it"*, *"I deleted the branch"*. A lexicon for them would fire on
+  sentences no session can check.
+
+### Fixed
+- **A fenced block was being read as a sentence the agent wrote.** Measured over 670 real
+  stops, a Raft status table with a `COMMITTED` column, a CI log reading `PR #24 merged`
+  and an HTML paragraph all counted as claims. Fenced blocks and HTML tags are stripped
+  before a claim is looked for; inline code stays, because `` I ran `npm test` `` names
+  its command that way. This removed every false positive the sweep turned up.
+- `pushed us over the limit` is an idiom, like `pushed back`.
+- A version at the end of a sentence took the full stop with it, so `I tagged v1.0.0.`
+  never matched the tag `v1.0.0`.
+- `npm run lint` and `npm run build` were the same command to `ran`, which took the first
+  two words of each.
+
+### Measured
+- 112 labelled messages in `evals/claims.jsonl`, six kinds, **100% precision and recall**
+  on all of them. `evals/sweep-claims.mjs` measures the same lexicons over real transcript
+  history: across 670 stops the new kinds fire on 0.15% and under.
+
+
 ## [0.1.2] — 2026-09-28
 
 ### Fixed
@@ -72,7 +117,8 @@ history before any default was chosen.
   token anywhere, and every step is rerun-safe. `release-drift.yml` fails when a version
   sits on main untagged past a two-hour grace, on push and on a daily schedule.
 
-[Unreleased]: https://github.com/Allan-Nava/claimcheck/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/Allan-Nava/claimcheck/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/Allan-Nava/claimcheck/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/Allan-Nava/claimcheck/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/Allan-Nava/claimcheck/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Allan-Nava/claimcheck/releases/tag/v0.1.0

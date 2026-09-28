@@ -14,14 +14,17 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { COMMIT_CLAIM, PUSH_CLAIM, TEST_CLAIM, claimed } from '../claimcheck.mjs'
+import { COMMIT_CLAIM, MERGED_CLAIM, PUSH_CLAIM, RAN_CLAIM, TAG_CLAIM, TEST_CLAIM, claimed, claimedWhat } from '../claimcheck.mjs'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const argv = process.argv.slice(2)
 const showMisses = argv.includes('--misses')
 const write = argv.includes('--write')
 
-const KINDS = { tests: TEST_CLAIM, commit: COMMIT_CLAIM, push: PUSH_CLAIM }
+const KINDS = { tests: TEST_CLAIM, commit: COMMIT_CLAIM, push: PUSH_CLAIM, tagged: TAG_CLAIM, merged: MERGED_CLAIM, ran: RAN_CLAIM }
+// `tagged` and `merged` must also name what they are about; a sentence that matches the
+// lexicon but names nothing is not a claim this tool can check.
+const NAMES_SOMETHING = new Set(['tagged', 'merged', 'ran'])
 
 const rows = readFileSync(join(HERE, 'claims.jsonl'), 'utf8')
   .trim()
@@ -35,7 +38,7 @@ for (const kind of Object.keys(KINDS)) stats[kind] = { tp: 0, fp: 0, fn: 0, tn: 
 
 for (const row of rows) {
   for (const [kind, patterns] of Object.entries(KINDS)) {
-    const fired = claimed(row.message, patterns) !== null
+    const fired = NAMES_SOMETHING.has(kind) ? claimedWhat(row.message, patterns) !== null : claimed(row.message, patterns) !== null
     const should = row.expected.has(kind)
     if (fired && should) stats[kind].tp++
     else if (fired && !should) {
@@ -64,7 +67,7 @@ for (const [kind, s] of Object.entries(stats)) {
 const byLang = {}
 for (const row of rows) {
   const l = (byLang[row.lang] ??= { n: 0, right: 0 })
-  const fired = new Set(Object.entries(KINDS).filter(([, p]) => claimed(row.message, p) !== null).map(([k]) => k))
+  const fired = new Set(Object.entries(KINDS).filter(([k, p]) => (NAMES_SOMETHING.has(k) ? claimedWhat(row.message, p) : claimed(row.message, p)) !== null).map(([k]) => k))
   l.n++
   const same = fired.size === row.expected.size && [...fired].every((k) => row.expected.has(k))
   if (same) l.right++

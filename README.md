@@ -26,7 +26,10 @@ Verify each point and say plainly what is actually done and what is not.
 | `tests` | the message says the tests pass, but no test command ran this session, or the last one failed | on |
 | `commit` | the message says a commit was made, but files are still staged | on |
 | `push` | the message says the work was pushed, but commits are still ahead of the upstream | on |
+| `tagged` | the message says a version was tagged, and the repository has no such tag | on |
 | `paths` | the message cites a file that does not exist, or a line past the end of one | **off** |
+| `ran` | the message names a command in backticks that the session never ran | **off** |
+| `merged` | the message says a numbered pull request was merged, and GitHub disagrees | **off** |
 
 Everything else is silence. The test check reads the transcript and pairs every `Bash`
 `tool_use` with the `tool_result` carrying its id, so a command's fate is known rather
@@ -87,6 +90,36 @@ Over 1,744 Claude Code transcripts, 669 stops:
 `evals/suffix.mjs` and `evals/drift.mjs` are the two follow-up measurements that separated
 the invented paths from the merely moved ones.
 
+## Seeing what it did
+
+The hook blocks or it stays silent, and neither told you anything. Audit mode judges
+every stop for real, records it, and always falls through:
+
+```bash
+CLAIMCHECK_MODE=audit   # in the environment Claude Code runs in
+claimcheck report       # how often it fires, on what, over time
+```
+
+Every stop is recorded, not only the ones that fire — without the stops that found nothing
+there is no denominator and "how often does it fire" has no answer. The record lands in
+`~/.claimcheck/decisions.jsonl`, or wherever `CLAIMCHECK_DATA` points. A record that
+cannot be written is never a reason to stall the agent.
+
+This is what a new lexicon has to pass before it is allowed to block anything, and it is
+how the three checks that are off by default earn their way on.
+
+## A claim has to name what it is about
+
+`tagged`, `ran` and `merged` check something the session can look up, which means the
+sentence has to say what. *"I merged it"* names nothing; *"I merged #42"* names one thing,
+and that is the difference between a check and a guess.
+
+`ran` and `merged` are off by default for different reasons. `ran` is the check most
+likely to misfire on ordinary English — the many ways of saying "I looked at it" that
+claim nothing. `merged` reaches the network inside a hook's ten-second budget, and a stop
+that waits on GitHub has stopped being free. `CLAIMCHECK_RAN=1` and `CLAIMCHECK_MERGED=1`
+turn them on.
+
 ## The rules
 
 1. **Fail-open.** Malformed stdin, missing transcript, unreadable repository, any
@@ -140,7 +173,7 @@ To turn the path check on as well, set `CLAIMCHECK_PATHS=1` in that environment.
 ## Verify
 
 ```bash
-npm test                      # 44 assertions: the decisions, and the properties
+npm test                      # 63 assertions: the decisions, and the properties
 node claimcheck.mjs --explain # what it checks, in four lines
 npm run sweep                 # what it would have said across your own transcripts
 ```

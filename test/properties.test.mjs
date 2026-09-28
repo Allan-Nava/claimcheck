@@ -3,7 +3,7 @@
 
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
-import { rmSync, symlinkSync, writeFileSync } from 'node:fs'
+import { readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
 import { HOOK, git, hook, repo, sessionId, tmp, transcript } from './helpers.mjs'
@@ -190,5 +190,135 @@ describe('used as a library across repositories', () => {
 
     rmSync(a, { recursive: true, force: true })
     rmSync(b, { recursive: true, force: true })
+  })
+})
+
+describe('claims that name what they are about', () => {
+  test('a tag the repository has not got', async () => {
+    const mod = await import(HOOK)
+    const dir = repo()
+    writeFileSync(join(dir, 'a.txt'), 'x')
+    git(dir, 'add', '-A')
+    git(dir, 'commit', '-qm', 'one')
+    git(dir, 'tag', 'v1.0.0')
+    assert.ok(mod.checkTag('Done, I tagged v2.0.0.', dir), 'no such tag')
+    assert.equal(mod.checkTag('Done, I tagged v1.0.0.', dir), null, 'the tag is there')
+    assert.equal(mod.checkTag('Done, I tagged 1.0.0.', dir), null, 'v1.0.0 and 1.0.0 are one release')
+    rmSync(dir, { recursive: true, force: true })
+  })
+
+  test('a repository with no tags at all says nothing either way', async () => {
+    const mod = await import(HOOK)
+    const dir = repo()
+    writeFileSync(join(dir, 'a.txt'), 'x')
+    git(dir, 'add', '-A')
+    git(dir, 'commit', '-qm', 'one')
+    assert.equal(mod.checkTag('I tagged v2.0.0.', dir), null)
+    rmSync(dir, { recursive: true, force: true })
+  })
+
+  test('a command the session never ran', async () => {
+    const mod = await import(HOOK)
+    const runs = [{ command: 'npm run lint', ok: true }]
+    assert.ok(mod.checkRan('I ran `npm test`.', runs), 'never ran')
+    assert.equal(mod.checkRan('I ran `npm run lint`.', runs), null, 'it did')
+    assert.equal(mod.checkRan('I ran `npm run lint -- --fix`.', runs), null, 'same program, same first argument')
+    assert.ok(mod.checkRan('I ran `npm run build`.', runs), 'a different script is a different command')
+  })
+
+  test('a command inside a compound the session ran', async () => {
+    const mod = await import(HOOK)
+    assert.equal(mod.checkRan('I ran `npm test`.', [{ command: 'npm run lint && npm test', ok: true }]), null)
+  })
+
+  test('no transcript, no opinion', async () => {
+    const mod = await import(HOOK)
+    assert.equal(mod.checkRan('I ran `npm test`.', null), null)
+  })
+
+  test('an instruction to the reader is not a claim', async () => {
+    const mod = await import(HOOK)
+    assert.equal(mod.checkRan('Run `npm test` to see for yourself.', []), null)
+  })
+
+  test('a fenced block is output, not a sentence the agent wrote', async () => {
+    const mod = await import(HOOK)
+    assert.equal(mod.claimed('CI said:\n\n```\nall tests pass\n```\n', mod.TEST_CLAIM), null)
+    assert.ok(mod.claimed('All tests pass.', mod.TEST_CLAIM), 'outside a fence it still counts')
+  })
+})
+
+describe('audit mode and the record it leaves', () => {
+  const read = (dir) =>
+    readFileSync(join(dir, 'decisions.jsonl'), 'utf8')
+      .trim()
+      .split('\n')
+      .filter(Boolean)
+      .map((l) => JSON.parse(l))
+
+  test('judges for real, records, and never blocks', () => {
+    const dir = tmp()
+    const data = join(dir, 'data')
+    const input = { session_id: sessionId(), cwd: dir, transcript_path: transcript(dir, []), last_assistant_message: 'Done, all tests pass.' }
+    assert.equal(hook(input, { CLAIMCHECK_MODE: 'audit', CLAIMCHECK_DATA: data }), null, 'audit always falls through')
+    const rows = read(data)
+    assert.equal(rows.length, 1)
+    assert.equal(rows[0].outcome, 'would-block')
+    assert.deepEqual(rows[0].checks, ['tests'])
+    rmSync(dir, { recursive: true, force: true })
+  })
+
+  test('records the stops that found nothing too — without them there is no rate', () => {
+    const dir = tmp()
+    const data = join(dir, 'data')
+    const base = { cwd: dir, transcript_path: transcript(dir, []) }
+    hook({ ...base, session_id: sessionId(), last_assistant_message: 'Done, all tests pass.' }, { CLAIMCHECK_MODE: 'audit', CLAIMCHECK_DATA: data })
+    hook({ ...base, session_id: sessionId(), last_assistant_message: 'Here is what I found.' }, { CLAIMCHECK_MODE: 'audit', CLAIMCHECK_DATA: data })
+    const rows = read(data)
+    assert.equal(rows.length, 2)
+    assert.deepEqual(rows.map((r) => r.outcome).sort(), ['clear', 'would-block'])
+    rmSync(dir, { recursive: true, force: true })
+  })
+
+  test('enforce records the same line and still blocks', () => {
+    const dir = tmp()
+    const data = join(dir, 'data')
+    const d = hook({ session_id: sessionId(), cwd: dir, transcript_path: transcript(dir, []), last_assistant_message: 'Done, all tests pass.' }, { CLAIMCHECK_DATA: data })
+    assert.equal(d?.decision, 'block')
+    assert.equal(read(data)[0].outcome, 'block')
+    rmSync(dir, { recursive: true, force: true })
+  })
+
+  test('a data directory that cannot be written does not stall the agent', () => {
+    const dir = tmp()
+    // A directory path whose parent is a regular file: unwritable on every platform, and
+    // without reaching for /proc, which exists on Linux and not on macOS.
+    const blocked = join(dir, 'a-file', 'data')
+    writeFileSync(join(dir, 'a-file'), 'not a directory')
+    const d = hook(
+      { session_id: sessionId(), cwd: dir, transcript_path: transcript(dir, []), last_assistant_message: 'Done, all tests pass.' },
+      { CLAIMCHECK_DATA: blocked },
+    )
+    assert.equal(d?.decision, 'block', 'the record is never a precondition')
+    rmSync(dir, { recursive: true, force: true })
+  })
+
+  test('report counts what was recorded', () => {
+    const dir = tmp()
+    const data = join(dir, 'data')
+    const base = { cwd: dir, transcript_path: transcript(dir, []) }
+    for (const m of ['Done, all tests pass.', 'Nothing to report.', 'Fatto, i test passano.']) {
+      hook({ ...base, session_id: sessionId(), last_assistant_message: m }, { CLAIMCHECK_MODE: 'audit', CLAIMCHECK_DATA: data })
+    }
+    const out = execFileSync('node', [HOOK, 'report'], { encoding: 'utf8', env: { ...process.env, CLAIMCHECK_DATA: data } })
+    assert.match(out, /3 stops recorded/)
+    assert.match(out, /fired on 2 of them/)
+    assert.match(out, /tests\s+2/)
+    rmSync(dir, { recursive: true, force: true })
+  })
+
+  test('report with nothing recorded says so rather than failing', () => {
+    const out = execFileSync('node', [HOOK, 'report'], { encoding: 'utf8', env: { ...process.env, CLAIMCHECK_DATA: join(tmp(), 'empty') } })
+    assert.match(out, /nothing recorded yet/)
   })
 })

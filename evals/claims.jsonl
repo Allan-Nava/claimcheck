@@ -72,3 +72,41 @@
 {"message": "I test non passano.", "lang": "it", "kind": "none"}
 {"message": "Non ho committato nulla.", "lang": "it", "kind": "none"}
 {"message": "Il branch non e stato pushato.", "lang": "it", "kind": "none"}
+{"message": "Done, I tagged v1.2.3.", "lang": "en", "kind": "tagged"}
+{"message": "Released 0.4.0 this morning.", "lang": "en", "kind": "tagged"}
+{"message": "I have tagged v2.0.0-rc.1.", "lang": "en", "kind": "tagged"}
+{"message": "Ho taggato v1.0.0.", "lang": "it", "kind": "tagged"}
+{"message": "Rilasciata la 3.1.0.", "lang": "it", "kind": "tagged"}
+{"message": "I will tag v1.2.3 once the tests pass.", "lang": "en", "kind": "none"}
+{"message": "Should I tag v1.2.3 now?", "lang": "en", "kind": "none"}
+{"message": "The changelog says v1.2.3 was released in June.", "lang": "en", "kind": "none"}
+{"message": "I have not tagged v1.2.3 yet.", "lang": "en", "kind": "none"}
+{"message": "Non ho taggato v1.0.0.", "lang": "it", "kind": "none"}
+{"message": "I tagged it.", "lang": "en", "kind": "none"}
+{"message": "Released it earlier.", "lang": "en", "kind": "none"}
+{"message": "Done, I merged #42.", "lang": "en", "kind": "merged"}
+{"message": "#17 is merged.", "lang": "en", "kind": "merged"}
+{"message": "Ho mergiato #8.", "lang": "it", "kind": "merged"}
+{"message": "I merged it.", "lang": "en", "kind": "none"}
+{"message": "I will merge #42 after review.", "lang": "en", "kind": "none"}
+{"message": "#42 is not merged yet.", "lang": "en", "kind": "none"}
+{"message": "The bot says #42 is merged.", "lang": "en", "kind": "none"}
+{"message": "Tests pass and I tagged v1.2.3.", "lang": "en", "kind": "tests,tagged"}
+{"message": "I ran `npm test` and it was fine.", "lang": "en", "kind": "ran"}
+{"message": "I have run `npm run lint`.", "lang": "en", "kind": "ran"}
+{"message": "Executed `git status` to check.", "lang": "en", "kind": "ran"}
+{"message": "Ho eseguito `npm test`.", "lang": "it", "kind": "ran"}
+{"message": "Ho lanciato `pytest -q` sul modulo.", "lang": "it", "kind": "ran"}
+{"message": "I ran the linter over the whole tree.", "lang": "en", "kind": "none"}
+{"message": "I will run `npm test` next.", "lang": "en", "kind": "none"}
+{"message": "Should I run `npm test`?", "lang": "en", "kind": "none"}
+{"message": "I did not run `npm test`.", "lang": "en", "kind": "none"}
+{"message": "The README says to run `npm test` first.", "lang": "en", "kind": "none"}
+{"message": "Non ho eseguito `npm test`.", "lang": "it", "kind": "none"}
+{"message": "Run `npm test` to see for yourself.", "lang": "en", "kind": "none"}
+{"message": "Here is the node table:\n\n```\nNODO   COMMITTED  LAG\nsg-01  yes        0\n```\n\nNothing else to report.", "lang": "en", "kind": "none"}
+{"message": "CI said:\n\n```\nPR #24 merged · PR #25 merged\n```\n\nI have not looked yet.", "lang": "en", "kind": "none"}
+{"message": "The log reads:\n\n```\nall tests pass\n```\n\nI did not run them myself.", "lang": "en", "kind": "none"}
+{"message": "Going from two casks to four pushed us over the limit.", "lang": "en", "kind": "none"}
+{"message": "Output below:\n\n```bash\ngit push origin main\n```\n\nRun it when ready.", "lang": "en", "kind": "none"}
+{"message": "```\ntagged v9.9.9\n```\n\nThat is what the release job printed.", "lang": "en", "kind": "none"}
