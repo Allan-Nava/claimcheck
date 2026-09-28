@@ -1,0 +1,98 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test · node ${{ matrix.node }} · ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['18', '20', '22', '24']
+        os: [ubuntu-latest]
+        include:
+          # The hook shells out to git and reads paths, so it is worth proving on the
+          # platform most of its users are actually on.
+          - node: '22'
+            os: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: git identity for the fixtures
+        run: |
+          git config --global user.email "ci@example.com"
+          git config --global user.name "ci"
+          git config --global init.defaultBranch main
+      - run: npm test
+
+  guards:
+    name: guards
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # A hook runs on every stop. A dependency is a supply chain in that path.
+      - name: no runtime dependencies
+        run: |
+          node -e '
+            const p = require("./package.json")
+            for (const k of ["dependencies", "peerDependencies", "optionalDependencies"]) {
+              if (p[k] && Object.keys(p[k]).length) {
+                console.error(`package.json declares ${k}; claimcheck ships dependency-free`)
+                process.exit(1)
+              }
+            }
+            console.log("dependency-free")
+          '
+
+      # Fail-open is the product. If any of these prints a byte or exits non-zero, a
+      # broken install would stall every agent that has the hook enabled.
+      - name: fail-open on malformed input
+        run: |
+          set -u
+          fail=0
+          check() {
+            out=$(printf '%s' "$2" | node claimcheck.mjs); code=$?
+            if [ $code -ne 0 ]; then echo "FAIL $1: exit $code"; fail=1
+            elif [ -n "$out" ]; then echo "FAIL $1: printed '$out'"; fail=1
+            else echo "ok   $1"; fi
+          }
+          check "not json"        'this is not json'
+          check "empty"           ''
+          check "empty object"    '{}'
+          check "null message"    '{"last_assistant_message":null}'
+          check "wrong type"      '{"last_assistant_message":42}'
+          check "missing files"   '{"last_assistant_message":"Done, all tests pass.","transcript_path":"/nope/x.jsonl","cwd":"/nope"}'
+          exit $fail
+
+      - name: it can still describe itself
+        run: node claimcheck.mjs --explain
+
+      # The hook is one file; the tarball should say so.
+      - name: packs to the four files it claims
+        run: |
+          npm pack --dry-run --json > pack.json
+          node -e '
+            const files = require("./pack.json")[0].files.map((f) => f.path).sort()
+            const want = ["LICENSE", "README.md", "claimcheck.mjs", "package.json"]
+            const same = files.length === want.length && files.every((f, i) => f === want[i])
+            if (!same) {
+              console.error("packed:", files.join(", "))
+              console.error("wanted:", want.join(", "))
+              process.exit(1)
+            }
+            console.log("packs:", files.join(", "))
+          '
