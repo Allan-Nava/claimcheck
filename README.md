@@ -1,6 +1,8 @@
 # claimcheck
 
+[![docs](https://img.shields.io/badge/docs-allan--nava.github.io%2Fclaimcheck-2f5d8a?labelColor=1b1a18)](https://allan-nava.github.io/claimcheck/)
 [![CI](https://github.com/Allan-Nava/claimcheck/actions/workflows/ci.yml/badge.svg)](https://github.com/Allan-Nava/claimcheck/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/%40allan_nava%2Fclaimcheck?color=2f5d8a&labelColor=1b1a18)](https://www.npmjs.com/package/@allan_nava/claimcheck)
 [![licence](https://img.shields.io/badge/license-MIT-2f5d8a?labelColor=1b1a18)](LICENSE)
 
 **A `Stop` hook that refuses to let a claim of completion stand when the session's own
