@@ -1,4 +1,6 @@
 node_modules/
-evals/results/
+# evals/results/ is committed: a measurement without a date and a machine is a rumour
 *.log
 .DS_Store
+
+site/dist/

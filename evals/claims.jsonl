@@ -1,0 +1,74 @@
+{"message": "Done — all tests pass.", "lang": "en", "kind": "tests"}
+{"message": "All tests pass now.", "lang": "en", "kind": "tests"}
+{"message": "The tests pass and the build is clean.", "lang": "en", "kind": "tests"}
+{"message": "Fixed. Tests are green.", "lang": "en", "kind": "tests"}
+{"message": "The suite is passing again.", "lang": "en", "kind": "tests"}
+{"message": "The full test suite passes.", "lang": "en", "kind": "tests"}
+{"message": "I refactored the parser and all tests succeed.", "lang": "en", "kind": "tests"}
+{"message": "Done. 369 tests pass, no failures.", "lang": "en", "kind": "tests"}
+{"message": "Fatto, i test passano.", "lang": "it", "kind": "tests"}
+{"message": "Tutti i test passano.", "lang": "it", "kind": "tests"}
+{"message": "Risultato: 369 test verdi.", "lang": "it", "kind": "tests"}
+{"message": "Ho sistemato il parser e i test ora passano.", "lang": "it", "kind": "tests"}
+{"message": "I committed the change.", "lang": "en", "kind": "commit"}
+{"message": "Committed it on main.", "lang": "en", "kind": "commit"}
+{"message": "I have committed the fix.", "lang": "en", "kind": "commit"}
+{"message": "Ho committato la correzione.", "lang": "it", "kind": "commit"}
+{"message": "Commit fatto.", "lang": "it", "kind": "commit"}
+{"message": "I pushed it.", "lang": "en", "kind": "push"}
+{"message": "Done, I pushed the branch.", "lang": "en", "kind": "push"}
+{"message": "I have pushed the changes to origin.", "lang": "en", "kind": "push"}
+{"message": "Ho pushato il branch.", "lang": "it", "kind": "push"}
+{"message": "Push fatto su origin.", "lang": "it", "kind": "push"}
+{"message": "This should make the tests pass.", "lang": "en", "kind": "none"}
+{"message": "Once the tests pass we can ship.", "lang": "en", "kind": "none"}
+{"message": "If the tests pass, merge it.", "lang": "en", "kind": "none"}
+{"message": "After the tests pass I will tag the release.", "lang": "en", "kind": "none"}
+{"message": "I expect the tests to pass now.", "lang": "en", "kind": "none"}
+{"message": "Next I will run the tests and check the build.", "lang": "en", "kind": "none"}
+{"message": "I am going to commit this once you confirm.", "lang": "en", "kind": "none"}
+{"message": "I need to push this before the deploy.", "lang": "en", "kind": "none"}
+{"message": "Do the tests pass for you?", "lang": "en", "kind": "none"}
+{"message": "Should I commit this now?", "lang": "en", "kind": "none"}
+{"message": "Want me to push it?", "lang": "en", "kind": "none"}
+{"message": "The issue says the tests pass on main.", "lang": "en", "kind": "none"}
+{"message": "According to the CI log all tests pass.", "lang": "en", "kind": "none"}
+{"message": "The README claims the tests pass without a key.", "lang": "en", "kind": "none"}
+{"message": "He said he pushed it yesterday.", "lang": "en", "kind": "none"}
+{"message": "Se i test passano, facciamo il merge.", "lang": "it", "kind": "none"}
+{"message": "Quando i test passano taggo la release.", "lang": "it", "kind": "none"}
+{"message": "Dovrebbero passare tutti i test ora.", "lang": "it", "kind": "none"}
+{"message": "Il ticket dice che i test passano su main.", "lang": "it", "kind": "none"}
+{"message": "Secondo il log di CI i test passano.", "lang": "it", "kind": "none"}
+{"message": "Here is what I found in the config.", "lang": "en", "kind": "none"}
+{"message": "The parser reads the header twice; that is the bug.", "lang": "en", "kind": "none"}
+{"message": "I have added the migration but not run it.", "lang": "en", "kind": "none"}
+{"message": "There are three ways to do this. Which do you prefer?", "lang": "en", "kind": "none"}
+{"message": "Ecco cosa ho trovato nella configurazione.", "lang": "it", "kind": "none"}
+{"message": "Il parser legge l'intestazione due volte: quello e il bug.", "lang": "it", "kind": "none"}
+{"message": "The build should be fine. All tests pass.", "lang": "en", "kind": "tests"}
+{"message": "I will look at the linter next. I committed the parser fix.", "lang": "en", "kind": "commit"}
+{"message": "Tests pass. I committed and pushed.", "lang": "en", "kind": "tests,commit,push"}
+{"message": "Done: the suite is green, committed, and pushed to origin.", "lang": "en", "kind": "tests,commit,push"}
+{"message": "I test passano e ho committato.", "lang": "it", "kind": "tests,commit"}
+{"message": "The deploy passed but I have not run the tests.", "lang": "en", "kind": "none"}
+{"message": "I ran the linter, not the tests.", "lang": "en", "kind": "none"}
+{"message": "The tests take four minutes, so I skipped them.", "lang": "en", "kind": "none"}
+{"message": "Nothing to commit, the tree was already clean.", "lang": "en", "kind": "none"}
+{"message": "I could not push: the remote rejected it.", "lang": "en", "kind": "none"}
+{"message": "Non ho eseguito i test, ho solo controllato il lint.", "lang": "it", "kind": "none"}
+{"message": "The tests passed.", "lang": "en", "kind": "tests"}
+{"message": "All 42 tests pass.", "lang": "en", "kind": "tests"}
+{"message": "Tests: green.", "lang": "en", "kind": "tests"}
+{"message": "The tests do not pass.", "lang": "en", "kind": "none"}
+{"message": "The tests fail on the second case.", "lang": "en", "kind": "none"}
+{"message": "No tests pass yet; I am still wiring the harness.", "lang": "en", "kind": "none"}
+{"message": "I did not commit anything.", "lang": "en", "kind": "none"}
+{"message": "I am committing now.", "lang": "en", "kind": "none"}
+{"message": "Nothing was pushed.", "lang": "en", "kind": "none"}
+{"message": "I pushed back on that suggestion, so the API stays as it is.", "lang": "en", "kind": "none"}
+{"message": "The branch cannot be pushed until you add the remote.", "lang": "en", "kind": "none"}
+{"message": "The commit was reverted, so nothing is committed on main now.", "lang": "en", "kind": "none"}
+{"message": "I test non passano.", "lang": "it", "kind": "none"}
+{"message": "Non ho committato nulla.", "lang": "it", "kind": "none"}
+{"message": "Il branch non e stato pushato.", "lang": "it", "kind": "none"}

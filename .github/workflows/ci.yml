@@ -35,6 +35,26 @@ jobs:
           git config --global init.defaultBranch main
       - run: npm test
 
+  evals:
+    name: evals
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+
+      # Claim detection against the labelled set. A false positive is a blocked turn on
+      # an honest message, so run.mjs exits non-zero on one; a missed claim only costs
+      # coverage and is reported without failing.
+      - name: claim detection
+        run: node evals/run.mjs --misses
+
+      # Not a threshold, just a record: the numbers land in the job log so a change that
+      # makes the hook slower is visible in the diff of two runs.
+      - name: latency
+        run: node evals/bench.mjs --runs 15
+
   guards:
     name: guards
     runs-on: ubuntu-latest

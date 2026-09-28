@@ -25,7 +25,8 @@ const MAX_TRANSCRIPT_BYTES = 12 * 1024 * 1024
 // must. Over-matching costs a false block, which is the only failure that hurts.
 
 const TEST_CLAIM = [
-  /\b(?:all\s+)?tests?\s+(?:now\s+)?(?:pass(?:es|ing)?|are\s+green|succeed(?:ed)?)\b/i,
+  /\b(?:all\s+)?tests?\s+(?:now\s+)?(?:pass(?:es|ed|ing)?|are\s+green|succeed(?:ed)?)\b/i,
+  /\btests?\s*:\s*(?:green|passing|passed|pass(?:es)?|ok)\b/i,
   /\b(?:the\s+)?(?:full\s+)?(?:test\s+)?suite\s+(?:is\s+)?(?:green|passing|passes)\b/i,
   /\bi\s+test\s+(?:ora\s+)?pass(?:ano|a)\b/i,
   /\btutti\s+i\s+test\s+pass(?:ano|ati)\b/i,
@@ -40,7 +41,8 @@ const COMMIT_CLAIM = [
 ]
 
 const PUSH_CLAIM = [
-  /\b(?:i\s+)?(?:have\s+)?pushed\b/i,
+  // "pushed back on that suggestion" is an argument, not a git push.
+  /\b(?:i\s+)?(?:have\s+)?pushed\b(?!\s+back\b)/i,
   /\bho\s+pushat(?:o|i)\b/i,
   /\bpush\s+(?:fatto|eseguito)\b/i,
 ]
@@ -53,6 +55,16 @@ const HEDGE = /\b(?:should|would|will|expect|once|after|if|when|try|going to|nee
 // pass" describes a ticket, and blocking on it would punish an accurate summary.
 const ATTRIBUTION = /\b(?:says?|said|claims?|claimed|reports?|reported|according to|dice|dicono|sostiene|secondo)\b/i
 
+// A negated sentence states the opposite of a claim: "nothing was pushed", "the tests do
+// not pass", "non ho committato nulla". Measured on evals/claims.jsonl these were six of
+// the eight scoring errors, and every one of them was a false block.
+const NEGATION = /\b(?:not|n't|never|no|none|nothing|cannot|unable|without|nulla|niente|nessun[ao]?|non|senza)\b/i
+
+// …but negating a failure asserts success: "369 tests pass, no failures" is a claim, and
+// the negation rule above would otherwise withdraw it. Stripped before the test, not
+// carved out of it, so "no failures and nothing was pushed" still counts as negated.
+const NEGATED_FAILURE = /\b(?:no|without|zero|nessun[aeio]?|senza)\s+(?:failures?|errors?|problems?|issues?|regressions?|warnings?|errori|problemi|regressioni)\b/gi
+
 const sentences = (text) => text.split(/(?<=[.!?\n])\s+/)
 
 function claimed(text, patterns) {
@@ -60,6 +72,7 @@ function claimed(text, patterns) {
     if (HEDGE.test(s)) continue
     if (/\?\s*$/.test(s.trim())) continue // a question about the tests is not a claim about them
     if (ATTRIBUTION.test(s)) continue
+    if (NEGATION.test(s.replace(NEGATED_FAILURE, ' '))) continue
     for (const p of patterns) if (p.test(s)) return s.trim().slice(0, 200)
   }
   return null

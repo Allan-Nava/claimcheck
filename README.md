@@ -32,29 +32,56 @@ than inferred from its output.
 
 ## Measured
 
-Against 1,745 real Claude Code transcripts — 673 stops, 2026-09-28, Node 23.3:
+Everything here is reproducible from the repository; `evals/results/` holds the dated
+runs. Node 23.3, 2026-09-28.
 
-| | |
-|---|---|
-| stops that make a claim at all | **10.25%** — the rest never reach a check |
-| `tests` fires on | **0.30%** of stops |
-| `paths` fires on | **11.74%** of stops |
-| latency, no claim (the common case) | p50 **56 ms**, p95 58 ms |
-| latency, every check running | p50 **71 ms**, p95 93 ms |
+### Claim detection — `node evals/run.mjs`
 
-Both `tests` findings in that history were genuine: one message claimed 369 passing
-tests with no test command run in the session, another claimed green while the last
-test command had failed.
+74 labelled messages in `evals/claims.jsonl`, 30 of them carrying a claim, English and
+Italian:
 
-`paths` is off by default because that 11.74% does not survive inspection. Of 140
-findings, 68 were a real file cited relative to somewhere other than `cwd` — suffix
-matching against `git ls-files` now rescues those — and a good share of the rest were
-honest cross-repo references. The precision is not worth a blocked turn.
-`CLAIMCHECK_PATHS=1` opts in anyway.
+| kind | precision | recall | fp | fn |
+|---|---|---|---|---|
+| `tests` | 100% | 100% | 0 | 0 |
+| `commit` | 100% | 100% | 0 | 0 |
+| `push` | 100% | 100% | 0 | 0 |
 
-Reproduce the sweep over your own history with `npm run sweep`; `evals/suffix.mjs` and
-`evals/drift.mjs` are the two follow-up measurements that separated the invented paths
-from the merely moved ones.
+That table is the second draft. The first labelled set scored 100% too, and it was worth
+nothing: it only held messages written by someone who knew the patterns. Fifteen boundary
+cases later — negation, idiom, reported speech — it found **six false positives**, all of
+them a sentence that says the opposite of a claim: *nothing was pushed*, *the tests do not
+pass*, *non ho committato nulla*. A false positive is a blocked turn on an honest message,
+so CI fails on one; a missed claim only costs coverage and is reported.
+
+### Latency — `node evals/bench.mjs`
+
+| case | p50 | over Node startup |
+|---|---|---|
+| no claim, 100-command transcript | 60 ms | **12 ms** |
+| no claim, 1k-command transcript | 59 ms | 11 ms |
+| claim, all checks, 100-command transcript | 76 ms | 28 ms |
+| claim, all checks, 1k-command transcript | 79 ms | 31 ms |
+| claim, all checks, 10k-command transcript | 105 ms | 57 ms |
+
+Node's own startup is 48 ms of every one of those, measured in the same run and reported
+beside them, because most of the wall clock is the interpreter and claiming otherwise
+would flatter the hook.
+
+### Against real history — `npm run sweep`
+
+Over 1,745 Claude Code transcripts, 673 stops:
+
+- **10.25%** of stops make a claim at all; the rest never reach a check.
+- **`tests`** fires on **0.30%** of stops. Both findings were genuine: one message claimed
+  369 passing tests with no test command run in the session, another claimed green while
+  the last test command had failed.
+- **`paths`** fires on **11.74%**, and that is why it is off by default. Of 140 findings,
+  68 were a real file cited relative to somewhere other than `cwd` — suffix matching
+  against `git ls-files` now rescues those — and a good share of the rest were honest
+  cross-repo references. `CLAIMCHECK_PATHS=1` opts in anyway.
+
+`evals/suffix.mjs` and `evals/drift.mjs` are the two follow-up measurements that separated
+the invented paths from the merely moved ones.
 
 ## The rules
 

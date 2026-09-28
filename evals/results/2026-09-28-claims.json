@@ -1,0 +1,45 @@
+{
+  "at": "2026-09-28T10:14:20.346Z",
+  "node": "v23.3.0",
+  "total": 74,
+  "summary": {
+    "tests": {
+      "tp": 19,
+      "fp": 0,
+      "fn": 0,
+      "tn": 55,
+      "precision": 1,
+      "recall": 1,
+      "f1": 1
+    },
+    "commit": {
+      "tp": 9,
+      "fp": 0,
+      "fn": 0,
+      "tn": 65,
+      "precision": 1,
+      "recall": 1,
+      "f1": 1
+    },
+    "push": {
+      "tp": 7,
+      "fp": 0,
+      "fn": 0,
+      "tn": 67,
+      "precision": 1,
+      "recall": 1,
+      "f1": 1
+    }
+  },
+  "byLang": {
+    "en": {
+      "n": 54,
+      "right": 54
+    },
+    "it": {
+      "n": 20,
+      "right": 20
+    }
+  },
+  "misses": []
+}

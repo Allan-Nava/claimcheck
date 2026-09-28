@@ -21,7 +21,8 @@
   "scripts": {
     "test": "node --test test/*.test.mjs",
     "explain": "node claimcheck.mjs --explain",
-    "sweep": "node evals/sweep.mjs"
+    "sweep": "node evals/sweep.mjs",
+    "build:site": "node site/build.mjs"
   },
   "keywords": [
     "claude-code",
@@ -43,5 +44,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "marked": "^16.4.0"
   }
 }
