@@ -28,6 +28,9 @@ history before any default was chosen.
   fail-open on malformed input, and the packed file list.
 - Published as `@allan-nava/claimcheck`: the unscoped `claimcheck` on npm is an
   unrelated Dafny tool. The command the package installs is still `claimcheck`.
+- `release.yml`: the tag is the trigger, the publish authenticates over OIDC with no
+  token anywhere, and every step is rerun-safe. `release-drift.yml` fails when a version
+  sits on main untagged past a two-hour grace, on push and on a daily schedule.
 
 [Unreleased]: https://github.com/Allan-Nava/claimcheck/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/Allan-Nava/claimcheck/releases/tag/v0.1.0
