@@ -291,9 +291,13 @@ describe('audit mode and the record it leaves', () => {
 
   test('a data directory that cannot be written does not stall the agent', () => {
     const dir = tmp()
+    // A directory path whose parent is a regular file: unwritable on every platform, and
+    // without reaching for /proc, which exists on Linux and not on macOS.
+    const blocked = join(dir, 'a-file', 'data')
+    writeFileSync(join(dir, 'a-file'), 'not a directory')
     const d = hook(
       { session_id: sessionId(), cwd: dir, transcript_path: transcript(dir, []), last_assistant_message: 'Done, all tests pass.' },
-      { CLAIMCHECK_DATA: '/proc/nowhere/claimcheck' },
+      { CLAIMCHECK_DATA: blocked },
     )
     assert.equal(d?.decision, 'block', 'the record is never a precondition')
     rmSync(dir, { recursive: true, force: true })
