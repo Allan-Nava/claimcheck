@@ -26,8 +26,10 @@ history before any default was chosen.
   measurements that separated invented paths from merely moved ones.
 - CI on Node 18, 20, 22 and 24 (and macOS), with guards for dependency-freedom,
   fail-open on malformed input, and the packed file list.
-- Published as `@allan-nava/claimcheck`: the unscoped `claimcheck` on npm is an
-  unrelated Dafny tool. The command the package installs is still `claimcheck`.
+- Published as `@allan_nava/claimcheck`: the unscoped `claimcheck` on npm is an
+  unrelated Dafny tool, and the npm scope is the npm username `allan_nava` — an
+  underscore, where GitHub has the hyphen of `Allan-Nava`. The command the package
+  installs is still `claimcheck`.
 - `release.yml`: the tag is the trigger, the publish authenticates over OIDC with no
   token anywhere, and every step is rerun-safe. `release-drift.yml` fails when a version
   sits on main untagged past a two-hour grace, on push and on a daily schedule.

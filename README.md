@@ -72,12 +72,12 @@ from the merely moved ones.
 
 ## Install
 
-On npm as **`@allan-nava/claimcheck`** — the unscoped name belongs to an unrelated
+On npm as **`@allan_nava/claimcheck`** — the unscoped name belongs to an unrelated
 project. Install it globally, or clone this repository anywhere; either way the hook is
 a single file you point Claude Code at.
 
 ```bash
-npm install -g @allan-nava/claimcheck   # then the command is `claimcheck`
+npm install -g @allan_nava/claimcheck   # then the command is `claimcheck`
 ```
 
 Register it in `~/.claude/settings.json` for every project, or in a project's
