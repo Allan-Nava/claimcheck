@@ -22,7 +22,8 @@
     "test": "node --test test/*.test.mjs",
     "explain": "node claimcheck.mjs --explain",
     "sweep": "node evals/sweep.mjs",
-    "build:site": "node site/build.mjs"
+    "build:site": "node site/build.mjs",
+    "build:social": "node site/social.mjs"
   },
   "keywords": [
     "claude-code",

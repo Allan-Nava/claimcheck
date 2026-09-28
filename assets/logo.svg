@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="claimcheck">
+  <title>claimcheck</title>
+  <!-- A check that was never finished: the hook is drawn and the rise begins, and where
+       the tip should be there is only a point — the claim, made and not verified.
+       A sibling to stalecheck's mark, which is interrupted rather than unfinished. -->
+  <g fill="none" stroke="#2f5d8a" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M13 33 L26 46 L36 36" />
+  </g>
+  <circle cx="46" cy="26" r="4.8" fill="#2f5d8a" />
+</svg>
