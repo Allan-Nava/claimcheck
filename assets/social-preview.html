@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<!-- Rendered to assets/social-preview.png at 1200x630 by headless Chrome:
+     npm run build:social -->
+<html lang="en">
+<head><meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    width: 1200px; height: 630px; background: #141312; color: #e8e4dd;
+    font: 400 24px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 74px 80px; display: flex; flex-direction: column; justify-content: space-between;
+    position: relative; overflow: hidden;
+  }
+  body::after {
+    content: ""; position: absolute; right: -180px; top: -180px; width: 620px; height: 620px;
+    border-radius: 50%; background: radial-gradient(circle, rgba(47,93,138,.30), transparent 68%);
+  }
+  .top { display: flex; align-items: center; gap: 22px; }
+  .name { font-size: 46px; font-weight: 700; letter-spacing: -.02em; }
+  .ver { color: #9a938a; font-size: 24px; }
+  h1 { font-size: 60px; line-height: 1.12; font-weight: 700; letter-spacing: -.025em; }
+  h1 em { font-style: normal; color: #7fb0dd; }
+  .stats { display: flex; gap: 54px; position: relative; z-index: 1; }
+  .n { font-size: 44px; font-weight: 700; letter-spacing: -.02em; }
+  .l { font-size: 19px; color: #9a938a; margin-top: 2px; }
+  .foot { color: #9a938a; font-size: 21px; }
+</style></head>
+<body>
+  <div class="top">
+    <svg viewBox="0 0 64 64" width="56" height="56"><g fill="none" stroke="#7fb0dd" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 33 L26 46 L36 36"/></g><circle cx="46" cy="26" r="4.8" fill="#7fb0dd"/></svg>
+    <span class="name">claimcheck</span>
+    <span class="ver">@allan_nava/claimcheck</span>
+  </div>
+
+  <h1>&ldquo;Done, all tests pass.&rdquo;<br><em>Did they?</em></h1>
+
+  <div class="stats">
+    <div><div class="n">112</div><div class="l">labelled messages</div></div>
+    <div><div class="n">100%</div><div class="l">precision, six kinds</div></div>
+    <div><div class="n">12 ms</div><div class="l">the hook itself</div></div>
+    <div><div class="n">0</div><div class="l">dependencies</div></div>
+  </div>
+
+  <div class="foot">A Stop hook. No model, no network, no key &mdash; it reads the session's own record and answers.</div>
+</body>
+</html>
