@@ -1,6 +1,6 @@
 {
   "name": "@allan_nava/claimcheck",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A Stop hook for Claude Code that blocks a claim of completion the session's own record contradicts. Deterministic: no model, no network, no key.",
   "type": "module",
   "bin": {

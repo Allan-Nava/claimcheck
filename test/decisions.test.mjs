@@ -101,6 +101,18 @@ describe('cited paths (opt-in)', () => {
     assert.match(d.reason, /past the end of the file/)
   })
 
+  test('the line exactly past the end is past the end', () => {
+    // `real.mjs` holds three lines and a trailing newline. Counting the split parts made
+    // it look four lines long, so a citation to line 4 went unreported.
+    const d = decide('Fixed in `real.mjs:4`.', [['ls', true]], on)
+    assert.match(d.reason, /past the end of the file/)
+    assert.match(d.reason, /has 3 lines/)
+  })
+
+  test('the last real line is inside the file', () => {
+    assert.equal(decide('Fixed in `real.mjs:3`.', [['ls', true]], on), null)
+  })
+
   test('a line inside the file', () => {
     assert.equal(decide('Fixed in `real.mjs:2`.', [['ls', true]], on), null)
   })

@@ -71,13 +71,15 @@ would flatter the hook.
 
 ### Against real history — `npm run sweep`
 
-Over 1,745 Claude Code transcripts, 673 stops:
+Over 1,744 Claude Code transcripts, 669 stops:
 
-- **10.25%** of stops make a claim at all; the rest never reach a check.
+- **4.93%** of stops make a claim at all; the rest never reach a check. (The first
+  measurement said 10.25%, taken before negation and reported speech withdrew a claim.
+  Half of what counted as a claim was a sentence saying the opposite of one.)
 - **`tests`** fires on **0.30%** of stops. Both findings were genuine: one message claimed
   369 passing tests with no test command run in the session, another claimed green while
   the last test command had failed.
-- **`paths`** fires on **11.74%**, and that is why it is off by default. Of 140 findings,
+- **`paths`** fires on **9.57%**, and that is why it is off by default. Of 140 findings,
   68 were a real file cited relative to somewhere other than `cwd` — suffix matching
   against `git ls-files` now rescues those — and a good share of the rest were honest
   cross-repo references. `CLAIMCHECK_PATHS=1` opts in anyway.

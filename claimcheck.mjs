@@ -207,16 +207,28 @@ function checkPush(message, cwd) {
   return `the message says the work was pushed, but ${ahead} commit${ahead === '1' ? '' : 's'} on this branch ${ahead === '1' ? 'is' : 'are'} still ahead of ${upstream}. Claimed: "${claim}"`
 }
 
+// A trailing newline terminates the last line; it does not start another. Counting the
+// split parts made every file look one line longer, so a citation one past the end went
+// unreported and the number in the finding was wrong.
+function countLines(text) {
+  if (!text) return 0
+  const n = text.split('\n').length
+  return text.endsWith('\n') ? n - 1 : n
+}
+
 // A cited path that is missing at cwd may still be a real file one directory up or
 // down — `docs/x.md` when the file is at `sub/docs/x.md`. Measured over 140 real
 // findings, half were exactly this. Ask git once, and only when something is missing.
-let trackedCache = null
+// Keyed by repository. A single cache answered for whichever repository asked first,
+// which is invisible in the hook — one process, one cwd — but wrong in anything that
+// walks several, such as the eval runners in evals/.
+const trackedCache = new Map()
 function tracksSuffix(cwd, p) {
-  if (trackedCache === null) {
+  if (!trackedCache.has(cwd)) {
     const out = git(cwd, ['ls-files'])
-    trackedCache = out === null ? new Set() : new Set(out.split('\n').filter(Boolean))
+    trackedCache.set(cwd, out === null ? new Set() : new Set(out.split('\n').filter(Boolean)))
   }
-  for (const t of trackedCache) if (t === p || t.endsWith('/' + p)) return true
+  for (const t of trackedCache.get(cwd)) if (t === p || t.endsWith('/' + p)) return true
   return false
 }
 
@@ -232,7 +244,7 @@ function checkPaths(message, cwd) {
     }
     if (line) {
       try {
-        const n = readFileSync(abs, 'utf8').split('\n').length
+        const n = countLines(readFileSync(abs, 'utf8'))
         if (line > n) short.push(`${p}:${line} (the file has ${n} lines)`)
       } catch {
         /* unreadable: say nothing */

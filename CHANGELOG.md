@@ -6,6 +6,26 @@ All notable changes to this project are documented here, in the format of
 
 ## [Unreleased]
 
+## [0.1.2] — 2026-09-28
+
+### Fixed
+- **A file looked one line longer than it is.** A trailing newline terminates the last
+  line; counting the parts of `split('\n')` counted it as starting another. A citation
+  one past the end of a file went unreported, and when a finding did fire its line count
+  was one too high.
+- **One repository's file index answered for another.** The suffix index behind the path
+  check was cached in a module-level variable rather than per repository, so the second
+  repository in a process silently inherited the first one's tracked files. Invisible in
+  the hook, which runs one process per stop, and wrong in the eval runners, which walk
+  hundreds of repositories in one.
+
+### Changed
+- The measured figures in the README are re-stated against the current code. Claims are
+  made on **4.93%** of stops, not 10.25%: that first number was taken before negation and
+  reported speech withdrew a claim, and half of what it counted was a sentence saying the
+  opposite of one. The path check fires on 9.57%, not 11.74%.
+
+
 ## [0.1.1] — 2026-09-28
 
 ### Fixed
@@ -52,6 +72,7 @@ history before any default was chosen.
   token anywhere, and every step is rerun-safe. `release-drift.yml` fails when a version
   sits on main untagged past a two-hour grace, on push and on a daily schedule.
 
-[Unreleased]: https://github.com/Allan-Nava/claimcheck/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/Allan-Nava/claimcheck/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/Allan-Nava/claimcheck/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/Allan-Nava/claimcheck/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Allan-Nava/claimcheck/releases/tag/v0.1.0

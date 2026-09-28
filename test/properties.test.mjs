@@ -164,3 +164,31 @@ describe('invoked the way npm installs it', () => {
     assert.equal(typeof mod.checkTests, 'function')
   })
 })
+
+describe('used as a library across repositories', () => {
+  // The suffix index is asked per repository. A single shared cache answered for
+  // whichever asked first, so the second repository silently inherited the first
+  // repository's file list — invisible in the hook, wrong in the eval runners.
+  test('one repository\'s file index does not answer for another', async () => {
+    const mod = await import(HOOK)
+    const a = repo()
+    const b = repo()
+    writeFileSync(join(a, 'deep.mjs'), 'x\n')
+    execFileSync('mkdir', ['-p', join(a, 'deep', 'lib')])
+    writeFileSync(join(a, 'deep', 'lib', 'shared.mjs'), 'x\n')
+    git(a, 'add', '-A')
+    git(a, 'commit', '-qm', 'a')
+    writeFileSync(join(b, 'unrelated.mjs'), 'x\n')
+    git(b, 'add', '-A')
+    git(b, 'commit', '-qm', 'b')
+
+    const message = 'Fixed in `lib/shared.mjs`.'
+    process.env.CLAIMCHECK_PATHS = '1'
+    assert.equal(mod.checkPaths(message, a), null, 'a holds it under deep/, so the suffix rescues it')
+    assert.ok(mod.checkPaths(message, b), 'b does not hold it at any depth, so it must be reported')
+    delete process.env.CLAIMCHECK_PATHS
+
+    rmSync(a, { recursive: true, force: true })
+    rmSync(b, { recursive: true, force: true })
+  })
+})
