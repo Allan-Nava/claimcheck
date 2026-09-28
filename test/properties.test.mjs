@@ -2,10 +2,11 @@
 // when it cannot know, it cannot loop, and it reads git rather than guessing.
 
 import assert from 'node:assert/strict'
-import { rmSync, writeFileSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
+import { rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
-import { git, hook, repo, sessionId, tmp, transcript } from './helpers.mjs'
+import { HOOK, git, hook, repo, sessionId, tmp, transcript } from './helpers.mjs'
 
 describe('fail-open', () => {
   const quiet = [
@@ -126,5 +127,40 @@ describe('the block itself', () => {
     const d = hook({ session_id: sessionId(), cwd: dir, transcript_path: transcript(dir, []), last_assistant_message: 'Done — all tests pass and I committed it.' })
     assert.match(d.reason, /\(1\).*\(2\)/s)
     rmSync(dir, { recursive: true, force: true })
+  })
+})
+
+// npm installs the bin as a symlink in node_modules/.bin, so argv[1] is the link and not
+// the file. 0.1.0 shipped a direct-invocation guard that compared the two unresolved: the
+// published hook exited 0 in silence on every stop, indistinguishable from fail-open, and
+// every test here passed because they all invoke the file by its own path.
+describe('invoked the way npm installs it', () => {
+  test('through a symlink it still decides', () => {
+    const dir = tmp()
+    const link = join(dir, 'claimcheck')
+    symlinkSync(HOOK, link)
+
+    const input = JSON.stringify({ session_id: sessionId(), cwd: dir, transcript_path: transcript(dir, []), last_assistant_message: 'Done, all tests pass.' })
+    const out = execFileSync('node', [link], { input, encoding: 'utf8' }).trim()
+    assert.notEqual(out, '', 'a hook reached through its installed name must still answer')
+    assert.equal(JSON.parse(out).decision, 'block')
+
+    rmSync(dir, { recursive: true, force: true })
+  })
+
+  test('through a symlink it can still describe itself', () => {
+    const dir = tmp()
+    const link = join(dir, 'claimcheck')
+    symlinkSync(HOOK, link)
+    const out = execFileSync('node', [link, '--explain'], { encoding: 'utf8' })
+    assert.match(out, /deterministic Stop hook/)
+    rmSync(dir, { recursive: true, force: true })
+  })
+
+  test('imported as a module it decides nothing on its own', async () => {
+    // The other half of the guard: importing must not read stdin or exit.
+    const mod = await import(HOOK)
+    assert.equal(typeof mod.decide, 'function')
+    assert.equal(typeof mod.checkTests, 'function')
   })
 })

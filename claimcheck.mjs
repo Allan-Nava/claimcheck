@@ -10,9 +10,10 @@
 // Exit 0 always. Silence = nothing to say. A block is one JSON object on stdout.
 
 import { execFileSync } from 'node:child_process'
-import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, realpathSync, statSync, writeFileSync } from 'node:fs'
 import { homedir, tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const MARKER_DIR = join(tmpdir(), 'claimcheck')
 const MAX_TRANSCRIPT_BYTES = 12 * 1024 * 1024
@@ -312,7 +313,19 @@ async function main() {
 // invocation reads stdin and decides.
 export { bashRuns, checkCommit, checkPaths, checkPush, checkTests, citedPaths, claimed, decide, COMMIT_CLAIM, PUSH_CLAIM, TEST_CLAIM }
 
-if (process.argv[1] && resolve(process.argv[1]) === resolve(new URL(import.meta.url).pathname)) {
+// Both sides are resolved through the filesystem before they are compared. npm installs
+// the bin as a SYMLINK in node_modules/.bin, so argv[1] is the link while import.meta.url
+// is the file it points at: comparing them unresolved made the published 0.1.0 exit 0 in
+// silence on every stop, which looks exactly like fail-open working.
+function invokedDirectly() {
+  try {
+    return Boolean(process.argv[1]) && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))
+  } catch {
+    return false
+  }
+}
+
+if (invokedDirectly()) {
   main().then(
     () => process.exit(0),
     () => process.exit(0),

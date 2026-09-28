@@ -6,6 +6,24 @@ All notable changes to this project are documented here, in the format of
 
 ## [Unreleased]
 
+## [0.1.1] — 2026-09-28
+
+### Fixed
+- **The installed hook did nothing at all.** npm installs the bin as a symlink in
+  `node_modules/.bin`, so `process.argv[1]` is the link while `import.meta.url` is the
+  file it points at. The direct-invocation guard compared the two unresolved, decided it
+  was being imported rather than run, and exited 0 with empty stdout on every stop —
+  indistinguishable from fail-open, and therefore silent. Both sides are now resolved
+  through the filesystem with `realpathSync`.
+
+  Every test passed because they all invoked the file by its own path. Three tests now
+  reach the hook through a symlink, the way an install does.
+- `exports` blocked `require('@allan_nava/claimcheck/package.json')`; the subpath is
+  declared now.
+
+### Note
+- 0.1.0 is published but inert once installed. Use 0.1.1.
+
 ## [0.1.0] — 2026-09-28
 
 The first release: a deterministic `Stop` hook, measured against real transcript
@@ -34,5 +52,6 @@ history before any default was chosen.
   token anywhere, and every step is rerun-safe. `release-drift.yml` fails when a version
   sits on main untagged past a two-hour grace, on push and on a daily schedule.
 
-[Unreleased]: https://github.com/Allan-Nava/claimcheck/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/Allan-Nava/claimcheck/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/Allan-Nava/claimcheck/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Allan-Nava/claimcheck/releases/tag/v0.1.0

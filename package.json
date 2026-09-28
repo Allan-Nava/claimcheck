@@ -1,12 +1,15 @@
 {
   "name": "@allan_nava/claimcheck",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Stop hook for Claude Code that blocks a claim of completion the session's own record contradicts. Deterministic: no model, no network, no key.",
   "type": "module",
   "bin": {
     "claimcheck": "claimcheck.mjs"
   },
-  "exports": "./claimcheck.mjs",
+  "exports": {
+    ".": "./claimcheck.mjs",
+    "./package.json": "./package.json"
+  },
   "files": [
     "claimcheck.mjs",
     "README.md",
