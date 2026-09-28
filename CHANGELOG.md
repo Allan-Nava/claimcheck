@@ -26,6 +26,8 @@ history before any default was chosen.
   measurements that separated invented paths from merely moved ones.
 - CI on Node 18, 20, 22 and 24 (and macOS), with guards for dependency-freedom,
   fail-open on malformed input, and the packed file list.
+- Published as `@allan-nava/claimcheck`: the unscoped `claimcheck` on npm is an
+  unrelated Dafny tool. The command the package installs is still `claimcheck`.
 
 [Unreleased]: https://github.com/Allan-Nava/claimcheck/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/Allan-Nava/claimcheck/releases/tag/v0.1.0

@@ -72,8 +72,16 @@ from the merely moved ones.
 
 ## Install
 
-Clone it anywhere, then register the hook in `~/.claude/settings.json` for every
-project, or in a project's `.claude/settings.json` for one:
+On npm as **`@allan-nava/claimcheck`** — the unscoped name belongs to an unrelated
+project. Install it globally, or clone this repository anywhere; either way the hook is
+a single file you point Claude Code at.
+
+```bash
+npm install -g @allan-nava/claimcheck   # then the command is `claimcheck`
+```
+
+Register it in `~/.claude/settings.json` for every project, or in a project's
+`.claude/settings.json` for one:
 
 ```json
 {
@@ -83,7 +91,7 @@ project, or in a project's `.claude/settings.json` for one:
         "hooks": [
           {
             "type": "command",
-            "command": "node /absolute/path/to/claimcheck/claimcheck.mjs",
+            "command": "claimcheck",
             "timeout": 10
           }
         ]
@@ -92,6 +100,9 @@ project, or in a project's `.claude/settings.json` for one:
   }
 }
 ```
+
+From a clone rather than a global install, the command is
+`node /absolute/path/to/claimcheck/claimcheck.mjs` instead.
 
 To turn the path check on as well, set `CLAIMCHECK_PATHS=1` in that environment.
 

@@ -1,21 +1,44 @@
 {
-  "name": "claimcheck",
+  "name": "@allan-nava/claimcheck",
   "version": "0.1.0",
   "description": "A Stop hook for Claude Code that blocks a claim of completion the session's own record contradicts. Deterministic: no model, no network, no key.",
   "type": "module",
-  "bin": { "claimcheck": "claimcheck.mjs" },
+  "bin": {
+    "claimcheck": "claimcheck.mjs"
+  },
   "exports": "./claimcheck.mjs",
-  "files": ["claimcheck.mjs", "README.md", "LICENSE"],
-  "engines": { "node": ">=18" },
+  "files": [
+    "claimcheck.mjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "test": "node --test test/*.test.mjs",
     "explain": "node claimcheck.mjs --explain",
     "sweep": "node evals/sweep.mjs"
   },
-  "keywords": ["claude-code", "hook", "stop-hook", "verification", "hallucination", "agent"],
+  "keywords": [
+    "claude-code",
+    "hook",
+    "stop-hook",
+    "verification",
+    "hallucination",
+    "agent"
+  ],
   "license": "MIT",
   "author": "Allan Nava",
-  "repository": { "type": "git", "url": "git+https://github.com/Allan-Nava/claimcheck.git" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Allan-Nava/claimcheck.git"
+  },
   "homepage": "https://github.com/Allan-Nava/claimcheck#readme",
-  "bugs": { "url": "https://github.com/Allan-Nava/claimcheck/issues" }
+  "bugs": {
+    "url": "https://github.com/Allan-Nava/claimcheck/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

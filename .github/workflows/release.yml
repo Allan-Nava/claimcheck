@@ -1,0 +1,91 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: The existing tag to release, e.g. v0.1.0
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: publish and release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # the GitHub release
+      id-token: write # provenance, and OIDC publishing once it is configured
+    env:
+      # Empty until the secret is added; the publish step skips itself rather than
+      # failing a release that is otherwise good.
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          registry-url: https://registry.npmjs.org
+
+      # Nothing is published that has not passed the same suite CI runs.
+      - name: git identity for the fixtures
+        run: |
+          git config --global user.email "ci@example.com"
+          git config --global user.name "ci"
+          git config --global init.defaultBranch main
+      - run: npm test
+
+      # A tag that disagrees with package.json is a release nobody can reason about.
+      - name: the tag matches the manifest
+        run: |
+          tag="${{ github.event.inputs.tag || github.ref_name }}"
+          manifest="v$(node -p "require('./package.json').version")"
+          if [ "$tag" != "$manifest" ]; then
+            echo "tag $tag but package.json says $manifest"
+            exit 1
+          fi
+          echo "$tag matches package.json"
+
+      - name: the changelog has an entry for it
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if ! grep -q "^## \[$version\]" CHANGELOG.md; then
+            echo "CHANGELOG.md has no '## [$version]' section"
+            exit 1
+          fi
+          echo "changelog documents $version"
+
+      # npm 11.5.1+ picks up OIDC automatically when the package has a trusted
+      # publisher configured; NODE_AUTH_TOKEN covers the first publish and anything
+      # before that is set up. Provenance is signed either way.
+      - name: publish to npm
+        if: ${{ env.NPM_TOKEN != '' }}
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
+
+      - name: npm publish skipped
+        if: ${{ env.NPM_TOKEN == '' }}
+        run: |
+          echo "NPM_TOKEN is not set, so nothing was published to npm."
+          echo "Add the secret and re-run this workflow with the same tag to publish."
+          echo "::notice title=npm::Release tagged and published on GitHub; npm skipped (no NPM_TOKEN)"
+
+      - name: github release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="${{ github.event.inputs.tag || github.ref_name }}"
+          version="${tag#v}"
+          # The release notes are the changelog section for this version, nothing else.
+          awk -v v="$version" '
+            $0 ~ "^## \\[" v "\\]" { on = 1; next }
+            on && /^## \[/ { exit }
+            on { print }
+          ' CHANGELOG.md > notes.md
+          gh release create "$tag" --title "$tag" --notes-file notes.md --verify-tag
