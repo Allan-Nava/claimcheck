@@ -6,6 +6,19 @@ All notable changes to this project are documented here, in the format of
 
 ## [Unreleased]
 
+## [0.2.1] — 2026-09-29
+
+No change to what the hook does. The npm listing shows this README, and until now it
+showed neither the mark nor a link to the documentation.
+
+### Added
+- A mark, in `assets/`, and the README header that carries it. It is a check never
+  finished: the hook is drawn, the rise begins, and where the tip should be there is only
+  a point — a claim made and not verified.
+- A link to the page, which now has a social card of its own, so a link to it stops
+  rendering bare.
+
+
 ## [0.2.0] — 2026-09-28
 
 The v0.2.0 milestone: more kinds of claim, and a way to see what the hook has been doing.
@@ -117,7 +130,8 @@ history before any default was chosen.
   token anywhere, and every step is rerun-safe. `release-drift.yml` fails when a version
   sits on main untagged past a two-hour grace, on push and on a daily schedule.
 
-[Unreleased]: https://github.com/Allan-Nava/claimcheck/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/Allan-Nava/claimcheck/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/Allan-Nava/claimcheck/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/Allan-Nava/claimcheck/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/Allan-Nava/claimcheck/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/Allan-Nava/claimcheck/compare/v0.1.0...v0.1.1
